@@ -16,7 +16,7 @@ namespace InventorizationBackend
 {
   public class Program
   {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
       var builder = WebApplication.CreateBuilder(args);
 
@@ -60,13 +60,6 @@ namespace InventorizationBackend
 
       var app = builder.Build();
 
-      using (var scope = app.Services.CreateScope())
-      {
-        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-        SeedRolesAndAdminUserAsync(roleManager, userManager);
-      }
-
       // Configure the HTTP request pipeline.
       if (app.Environment.IsDevelopment())
       {
@@ -78,52 +71,47 @@ namespace InventorizationBackend
       app.UseAuthentication();
       app.UseAuthorization();
       app.MapControllers();
+
+      using (var scope = app.Services.CreateScope())
+      {
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+        await SeedRolesAndAdminUser(roleManager, userManager);
+      }
+
       app.Run();
     }
 
-    static async Task SeedRolesAndAdminUserAsync(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
+    private static async Task SeedRolesAndAdminUser(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
     {
-      string[] roles = ["ADMIN", "OPERATOR"];
+      // Seed Roles
+      //if (!await roleManager.RoleExistsAsync("ADMIN"))
+      //  await roleManager.CreateAsync(new IdentityRole("ADMIN"));
 
-      foreach (var role in roles)
+      //if (!await roleManager.RoleExistsAsync("OPERATOR"))
+      //  await roleManager.CreateAsync(new IdentityRole("OPERATOR"));
+
+      // Seed Initial Admin User
+      var adminEmail = "georgievteodor281@gmail.com";
+      var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+      if (adminUser == null)
       {
-        if (!await roleManager.RoleExistsAsync(role))
+        adminUser = new ApplicationUser
         {
-          await roleManager.CreateAsync(new IdentityRole(role));
-        }
-      }
-
-      // Step 2: Create the user if it doesn't exist
-      string email = "georgievteodor281@gmail.com";
-      string password = "admin123";
-      var user = await userManager.FindByEmailAsync(email);
-
-      if (user == null)
-      {
-        user = new ApplicationUser
-        {
-          UserName = email,
-          Email = email,
+          UserName = adminEmail,
+          Email = adminEmail,
           EmailConfirmed = true
         };
 
-        var result = await userManager.CreateAsync(user, password);
-        if (!result.Succeeded)
+        var result = await userManager.CreateAsync(adminUser, "admin123");
+
+        if (result.Succeeded)
         {
-          foreach (var error in result.Errors)
-          {
-            Console.WriteLine(error.Description);
-          }
-          return;
+          await userManager.AddToRoleAsync(adminUser, "ADMIN");
         }
       }
-
-      // Step 3: Assign the ADMIN role to the user if they don't already have it
-      if (!await userManager.IsInRoleAsync(user, "ADMIN"))
-      {
-        await userManager.AddToRoleAsync(user, "ADMIN");
-      }
     }
-
   }
 }
