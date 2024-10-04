@@ -1,0 +1,6 @@
+@InventorizationBackend_HostAddress = http://localhost:5223
+
+GET {{InventorizationBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
