@@ -41,5 +41,36 @@ namespace InventorizationBackend.Services
           Name = productName
       };
     }
+
+    public async Task<bool> UpdateProductQuantityAsync(int id, int quantity)
+    {
+      if (quantity < 0)
+      {
+        throw new ArgumentException("Quantity cannot be negative", nameof(quantity));
+      }
+
+      var product = await _context.Products.FindAsync(id);
+      if (product == null)
+      {
+        throw new ArgumentException("Product not found", nameof(id));
+      }
+
+      product.Quantity = quantity;
+      await _context.SaveChangesAsync();
+
+      return true;
+    }
+
+    public async Task<bool> DeleteProductAsync(int id)
+    {
+      var product = await _context.Products.FindAsync(id);
+      if (product == null)
+      {
+        return false;
+      }
+
+      _context.Products.Remove(product);
+      return await _context.SaveChangesAsync() > 0;
+    }
   }
 }

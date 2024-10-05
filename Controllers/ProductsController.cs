@@ -45,5 +45,37 @@ namespace InventorizationBackend.Controllers
         return BadRequest(ex.Message);
       }
     }
+
+    [HttpPatch("{id}/quantity")]
+    [Authorize]
+    public async Task<IActionResult> UpdateProductQuantity(int id, [FromBody] int quantity)
+    {
+      try
+      {
+        var success = await _productService.UpdateProductQuantityAsync(id, quantity);
+        if (success) { 
+          return Ok();
+        }
+
+        return BadRequest();
+      }
+      catch (ArgumentException ex)
+      {
+        return BadRequest(ex.Message);
+      }
+    }
+
+    [HttpDelete("{id}")]
+    [Authorize(Roles = "ADMIN")]
+    public async Task<IActionResult> DeleteProductAsync(int id)
+    {
+      var result = await _productService.DeleteProductAsync(id);
+      if (!result)
+      {
+        return NotFound();
+      }
+
+      return Ok();
+    }
   }
 }
