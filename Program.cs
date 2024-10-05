@@ -16,7 +16,7 @@ namespace InventorizationBackend
 {
   public class Program
   {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
       var builder = WebApplication.CreateBuilder(args);
 
@@ -60,11 +60,17 @@ namespace InventorizationBackend
 
       var app = builder.Build();
 
+      // Create initial User Roles
       using (var scope = app.Services.CreateScope())
       {
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-        SeedRolesAndAdminUserAsync(roleManager, userManager);
+        var roles = new[] { "ADMIN", "OPERATOR" };
+
+        foreach (var role in roles)
+        {
+          if (!await roleManager.RoleExistsAsync(role))
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
       }
 
       // Configure the HTTP request pipeline.
@@ -78,52 +84,8 @@ namespace InventorizationBackend
       app.UseAuthentication();
       app.UseAuthorization();
       app.MapControllers();
+
       app.Run();
     }
-
-    static async Task SeedRolesAndAdminUserAsync(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
-    {
-      string[] roles = ["ADMIN", "OPERATOR"];
-
-      foreach (var role in roles)
-      {
-        if (!await roleManager.RoleExistsAsync(role))
-        {
-          await roleManager.CreateAsync(new IdentityRole(role));
-        }
-      }
-
-      // Step 2: Create the user if it doesn't exist
-      string email = "georgievteodor281@gmail.com";
-      string password = "admin123";
-      var user = await userManager.FindByEmailAsync(email);
-
-      if (user == null)
-      {
-        user = new ApplicationUser
-        {
-          UserName = email,
-          Email = email,
-          EmailConfirmed = true
-        };
-
-        var result = await userManager.CreateAsync(user, password);
-        if (!result.Succeeded)
-        {
-          foreach (var error in result.Errors)
-          {
-            Console.WriteLine(error.Description);
-          }
-          return;
-        }
-      }
-
-      // Step 3: Assign the ADMIN role to the user if they don't already have it
-      if (!await userManager.IsInRoleAsync(user, "ADMIN"))
-      {
-        await userManager.AddToRoleAsync(user, "ADMIN");
-      }
-    }
-
   }
 }

@@ -2,7 +2,7 @@
 
 namespace InventorizationBackend.Models
 {
-  public class LoginModel
+  public class RegisterModel
   {
     [Required]
     [EmailAddress]
@@ -10,5 +10,9 @@ namespace InventorizationBackend.Models
 
     [Required]
     public string Password { get; set; }
+
+    [Required]
+    [RegularExpression("^(ADMIN|OPERATOR)$", ErrorMessage = "Role must be either ADMIN or OPERATOR")]
+    public string Role { get; set; }
   }
 }
