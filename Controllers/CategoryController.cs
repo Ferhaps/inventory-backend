@@ -33,7 +33,6 @@ namespace InventorizationBackend.Controllers
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "ADMIN")]
-    [ProducesResponseType(404)]
     public async Task<IActionResult> DeleteCategory(int id)
     {
       var result = await _categoryService.DeleteCategoryAsync(id);

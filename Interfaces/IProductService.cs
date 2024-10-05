@@ -7,6 +7,6 @@ namespace InventorizationBackend.Interfaces
   {
     Task<ICollection<Product>> GetProductsAsync();
 
-    Task<CreateProductDto> CreateProductAsync(int categoryId, string productName);
+    Task<ProductDto> CreateProductAsync(int categoryId, string productName);
   }
 }

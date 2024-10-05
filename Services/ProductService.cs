@@ -15,7 +15,7 @@ namespace InventorizationBackend.Services
       return await _context.Products.OrderBy(p => p.Id).ToListAsync();
     }
 
-    public async Task<CreateProductDto> CreateProductAsync(int categoryId, string productName)
+    public async Task<ProductDto> CreateProductAsync(int categoryId, string productName)
     {
       var category = await _context.Categories.FindAsync(categoryId);
       if (category == null)
@@ -33,10 +33,10 @@ namespace InventorizationBackend.Services
       _context.Products.Add(product);
       await _context.SaveChangesAsync();
 
-      return new CreateProductDto
+      return new ProductDto
       {
           Id = product.Id,
-          CategoryId = categoryId,
+          CategoryName = category.Name,
           Quantity = 0,
           Name = productName
       };

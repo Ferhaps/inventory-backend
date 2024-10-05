@@ -20,14 +20,14 @@ namespace InventorizationBackend.Controllers
     public async Task<IActionResult> GetProductsAsync()
     {
       var products = await _productService.GetProductsAsync();
-      var productDtos = _mapper.Map<List<GetProductDto>>(products);
+      var productDtos = _mapper.Map<List<ProductDto>>(products);
 
       return Ok(productDtos);
     }
 
     [HttpPost]
     [Authorize]
-    [ProducesResponseType(200, Type = typeof(CreateProductDto))]
+    [ProducesResponseType(200, Type = typeof(ProductDto))]
     public async Task<IActionResult> CreateProductAsync([FromQuery] string name, [FromQuery] int categoryId)
     {
       if (string.IsNullOrWhiteSpace(name))
