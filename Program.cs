@@ -60,6 +60,19 @@ namespace InventorizationBackend
 
       var app = builder.Build();
 
+      // Create initial User Roles
+      using (var scope = app.Services.CreateScope())
+      {
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        var roles = new[] { "ADMIN", "OPERATOR" };
+
+        foreach (var role in roles)
+        {
+          if (!await roleManager.RoleExistsAsync(role))
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+      }
+
       // Configure the HTTP request pipeline.
       if (app.Environment.IsDevelopment())
       {

@@ -1,5 +1,6 @@
 ﻿using InventorizationBackend.Interfaces;
 using InventorizationBackend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventorizationBackend.Controllers
@@ -17,9 +18,29 @@ namespace InventorizationBackend.Controllers
       var token = await _authService.LoginAsync(model);
 
       if (string.IsNullOrEmpty(token))
-        return BadRequest(new { error = "Invalid Credentials" });
+        return BadRequest(new { error = "INVALID_CREDENTIALS" });
 
       return Ok(new { accessToken = token });
+    }
+
+    [HttpPost("register")]
+    [Authorize(Roles = "ADMIN")]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(403)]
+    public async Task<IActionResult> RegisterAsync([FromBody] RegisterModel model)
+    {
+      if (model.Role != "ADMIN" && model.Role != "OPERATOR")
+      {
+        return BadRequest(new { message = "Invalid role specified. Role must be either ADMIN or OPERATOR." });
+      }
+
+      var (Succeeded, Errors) = await _authService.RegisterAsync(model);
+
+      if (Succeeded)
+        return Ok(new { message = "User registered successfully" });
+
+      return BadRequest(new { errors = Errors });
     }
   }
 }

@@ -8,9 +8,10 @@ using System.Text;
 
 namespace InventorizationBackend.Services
 {
-  public class AuthService(UserManager<ApplicationUser> userManager, IConfiguration configuration) : IAuthService
+  public class AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration) : IAuthService
   {
     private readonly UserManager<ApplicationUser> _userManager = userManager;
+    private readonly RoleManager<IdentityRole> _roleManager = roleManager;
     private readonly IConfiguration _configuration = configuration;
 
     public async Task<string> LoginAsync(LoginModel loginBody)
@@ -22,7 +23,7 @@ namespace InventorizationBackend.Services
 
         var authClaims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(ClaimTypes.Email, user.Email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
@@ -45,6 +46,31 @@ namespace InventorizationBackend.Services
       }
 
       return null;
+    }
+
+    public async Task<(bool Succeeded, string[] Errors)> RegisterAsync(RegisterModel registerBody)
+    {
+      var user = new ApplicationUser { UserName = registerBody.Email, Email = registerBody.Email };
+      var result = await _userManager.CreateAsync(user, registerBody.Password);
+
+      if (result.Succeeded)
+      {
+        if (registerBody.Role != "ADMIN" && registerBody.Role != "OPERATOR")
+        {
+          return (false, new[] { "Invalid role specified." });
+        }
+
+        if (!await _roleManager.RoleExistsAsync(registerBody.Role))
+        {
+          await _roleManager.CreateAsync(new IdentityRole(registerBody.Role));
+        }
+
+        await _userManager.AddToRoleAsync(user, registerBody.Role);
+
+        return (true, []);
+      }
+
+      return (false, result.Errors.Select(e => e.Description).ToArray());
     }
   }
 }
