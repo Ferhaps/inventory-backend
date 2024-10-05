@@ -1,4 +1,5 @@
-﻿using InventorizationBackend.Models;
+﻿using InventorizationBackend.Dto;
+using InventorizationBackend.Models;
 
 namespace InventorizationBackend.Interfaces
 {
@@ -6,6 +7,6 @@ namespace InventorizationBackend.Interfaces
   {
     Task<ICollection<Product>> GetProductsAsync();
 
-    Task<Product> CreateProductAsync(Product product);
+    Task<CreateProductDto> CreateProductAsync(int categoryId, string productName);
   }
 }

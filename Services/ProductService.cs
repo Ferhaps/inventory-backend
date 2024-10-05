@@ -1,4 +1,5 @@
 ﻿using AuthDemo.Data;
+using InventorizationBackend.Dto;
 using InventorizationBackend.Interfaces;
 using InventorizationBackend.Models;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +15,31 @@ namespace InventorizationBackend.Services
       return await _context.Products.OrderBy(p => p.Id).ToListAsync();
     }
 
-    public async Task<Product> CreateProductAsync(Product product)
+    public async Task<CreateProductDto> CreateProductAsync(int categoryId, string productName)
     {
+      var category = await _context.Categories.FindAsync(categoryId);
+      if (category == null)
+      {
+        throw new ArgumentException("Invalid category ID", nameof(categoryId));
+      }
+
+      var product = new Product
+      {
+        Name = productName,
+        CategoryId = categoryId,
+        Quantity = 0
+      };
+
       _context.Products.Add(product);
       await _context.SaveChangesAsync();
-      return product;
+
+      return new CreateProductDto
+      {
+          Id = product.Id,
+          CategoryId = categoryId,
+          Quantity = 0,
+          Name = productName
+      };
     }
   }
 }

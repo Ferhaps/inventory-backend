@@ -9,16 +9,14 @@ namespace InventorizationBackend.Controllers
 {
   [Route("api/products")]
   [ApiController]
-  public class ProductsController(IProductService productService, ICategoryService categoryService, IMapper mapper) : ControllerBase
+  public class ProductsController(IProductService productService, IMapper mapper) : ControllerBase
   {
-    private readonly ICategoryService _categoryService = categoryService;
     private readonly IProductService _productService = productService;
     private readonly IMapper _mapper = mapper;
 
     [HttpGet]
     [Authorize]
     [ProducesResponseType(200, Type = typeof(ICollection<Product>))]
-    [ProducesResponseType(401)]
     public async Task<IActionResult> GetProductsAsync()
     {
       var products = await _productService.GetProductsAsync();
@@ -29,38 +27,23 @@ namespace InventorizationBackend.Controllers
 
     [HttpPost]
     [Authorize]
-    [ProducesResponseType(200, Type = typeof(Product))]
-    [ProducesResponseType(400)]
-    [ProducesResponseType(401)]
-    [ProducesResponseType(500)]
-    public async Task<IActionResult> CreateProductAsync([FromQuery] int categoryId, [FromBody] CreateProductDto productCreate)
+    [ProducesResponseType(200, Type = typeof(CreateProductDto))]
+    public async Task<IActionResult> CreateProductAsync([FromQuery] string name, [FromQuery] int categoryId)
     {
-      if (productCreate == null)
+      if (string.IsNullOrWhiteSpace(name))
       {
-        return BadRequest(new { message = "Body is null" });
+        return BadRequest("Product name is required.");
       }
 
-      var products = await _productService.GetProductsAsync();
-      var product = products
-        .FirstOrDefault(c => c.Name.Trim().Equals(productCreate.Name.Trim(), StringComparison.CurrentCultureIgnoreCase));
-
-      if (!ModelState.IsValid)
+      try
       {
-        return BadRequest(ModelState);
+        var product = await _productService.CreateProductAsync(categoryId, name);
+        return Ok(product);
       }
-
-      var productMap = _mapper.Map<Product>(productCreate);
-      productMap.Category = await _categoryService.GetCategoryAsync(categoryId);
-
-      var productSaved = _productService.CreateProductAsync(productMap);
-
-      if (productSaved == null)
+      catch (ArgumentException ex)
       {
-        ModelState.AddModelError("", "Something went wrong while saving");
-        return StatusCode(500, ModelState);
+        return BadRequest(ex.Message);
       }
-
-      return Ok(productSaved);
     }
   }
 }
