@@ -72,46 +72,7 @@ namespace InventorizationBackend
       app.UseAuthorization();
       app.MapControllers();
 
-      using (var scope = app.Services.CreateScope())
-      {
-        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-
-        await SeedRolesAndAdminUser(roleManager, userManager);
-      }
-
       app.Run();
-    }
-
-    private static async Task SeedRolesAndAdminUser(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
-    {
-      // Seed Roles
-      //if (!await roleManager.RoleExistsAsync("ADMIN"))
-      //  await roleManager.CreateAsync(new IdentityRole("ADMIN"));
-
-      //if (!await roleManager.RoleExistsAsync("OPERATOR"))
-      //  await roleManager.CreateAsync(new IdentityRole("OPERATOR"));
-
-      // Seed Initial Admin User
-      var adminEmail = "georgievteodor281@gmail.com";
-      var adminUser = await userManager.FindByEmailAsync(adminEmail);
-
-      if (adminUser == null)
-      {
-        adminUser = new ApplicationUser
-        {
-          UserName = adminEmail,
-          Email = adminEmail,
-          EmailConfirmed = true
-        };
-
-        var result = await userManager.CreateAsync(adminUser, "admin123");
-
-        if (result.Succeeded)
-        {
-          await userManager.AddToRoleAsync(adminUser, "ADMIN");
-        }
-      }
     }
   }
 }

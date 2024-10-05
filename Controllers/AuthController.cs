@@ -11,13 +11,13 @@ namespace InventorizationBackend.Controllers
     private readonly IAuthService _authService = authService;
 
     [HttpPost("login")]
-    [ProducesResponseType(401)]
+    [ProducesResponseType(400)]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
       var token = await _authService.LoginAsync(model);
 
       if (string.IsNullOrEmpty(token))
-        return Unauthorized();
+        return BadRequest(new { error = "Invalid Credentials" });
 
       return Ok(new { accessToken = token });
     }
