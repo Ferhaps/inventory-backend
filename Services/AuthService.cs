@@ -27,6 +27,13 @@ namespace InventorizationBackend.Services
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
+        var auds = _configuration.GetSection("JWT:Audiences").Get<string[]>()!;
+        foreach (var aud in auds)
+        {
+          Console.WriteLine(aud);
+          authClaims.Add(new Claim(JwtRegisteredClaimNames.Aud, aud));
+        }
+
         foreach (var userRole in userRoles)
         {
           authClaims.Add(new Claim(ClaimTypes.Role, userRole));
@@ -35,8 +42,8 @@ namespace InventorizationBackend.Services
         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
 
         var token = new JwtSecurityToken(
-          issuer: _configuration["JWT:ValidIssuer"],
-          audience: _configuration["JWT:ValidAudience"],
+          issuer: _configuration["JWT:Issuer"],
+          audience: null,
           expires: DateTime.Now.AddHours(3),
           claims: authClaims,
           signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)

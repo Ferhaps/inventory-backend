@@ -38,7 +38,6 @@ namespace InventorizationBackend
       {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
       })
       .AddJwtBearer(options =>
       {
@@ -47,9 +46,12 @@ namespace InventorizationBackend
         options.TokenValidationParameters = new TokenValidationParameters()
         {
           ValidateIssuer = true,
+          ValidIssuer = builder.Configuration["JWT:Issuer"],
+
           ValidateAudience = true,
-          ValidAudience = builder.Configuration["JWT:ValidAudience"],
-          ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+          ValidAudiences = builder.Configuration.GetSection("JWT:Audiences").Get<string[]>(),
+
+          ValidateIssuerSigningKey = true,
           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
         };
       });
