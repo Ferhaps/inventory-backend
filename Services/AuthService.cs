@@ -30,7 +30,6 @@ namespace InventorizationBackend.Services
         var auds = _configuration.GetSection("JWT:Audiences").Get<string[]>()!;
         foreach (var aud in auds)
         {
-          Console.WriteLine(aud);
           authClaims.Add(new Claim(JwtRegisteredClaimNames.Aud, aud));
         }
 
