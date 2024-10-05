@@ -9,5 +9,7 @@ namespace InventorizationBackend.Interfaces
     Task<Category> GetCategoryAsync(int categoryId);
 
     Task<Category> CreateCategoryAsync(string categoryName);
+
+    Task<bool> DeleteCategoryAsync(int categoryId);
   }
 }

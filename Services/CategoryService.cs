@@ -26,5 +26,17 @@ namespace InventorizationBackend.Services
       await _context.SaveChangesAsync();
       return category;
     }
+
+    public async Task<bool> DeleteCategoryAsync(int id)
+    {
+      var category = await _context.Categories.FindAsync(id);
+      if (category == null)
+      {
+        return false;
+      }
+
+      _context.Categories.Remove(category);
+      return await _context.SaveChangesAsync() > 0;
+    }
   }
 }

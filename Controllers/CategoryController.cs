@@ -14,9 +14,6 @@ namespace InventorizationBackend.Controllers
     [HttpPost]
     [Authorize]
     [ProducesResponseType(200, Type = typeof(Category))]
-    [ProducesResponseType(400)]
-    [ProducesResponseType(401)]
-    [ProducesResponseType(500)]
     public async Task<IActionResult> CreateCategoryAsync([FromQuery] string categoryName)
     {
       if (!ModelState.IsValid)
@@ -32,6 +29,20 @@ namespace InventorizationBackend.Controllers
       }
 
       return Ok(category);
+    }
+
+    [HttpDelete("{id}")]
+    [Authorize(Roles = "ADMIN")]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> DeleteCategory(int id)
+    {
+      var result = await _categoryService.DeleteCategoryAsync(id);
+      if (!result)
+      {
+        return NotFound();
+      }
+
+      return Ok();
     }
   }
 }
