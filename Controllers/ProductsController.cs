@@ -29,7 +29,7 @@ namespace InventorizationBackend.Controllers
 
     [HttpPost]
     [Authorize]
-    [ProducesResponseType(200)]
+    [ProducesResponseType(200, Type = typeof(Product))]
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]
     [ProducesResponseType(500)]
@@ -52,13 +52,15 @@ namespace InventorizationBackend.Controllers
       var productMap = _mapper.Map<Product>(productCreate);
       productMap.Category = await _categoryService.GetCategoryAsync(categoryId);
 
-      if (!_productService.CreateProduct(productMap))
+      var productSaved = _productService.CreateProductAsync(productMap);
+
+      if (productSaved == null)
       {
         ModelState.AddModelError("", "Something went wrong while saving");
         return StatusCode(500, ModelState);
       }
 
-      return Ok("Successfully created");
+      return Ok(productSaved);
     }
   }
 }

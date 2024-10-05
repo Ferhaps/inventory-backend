@@ -14,15 +14,11 @@ namespace InventorizationBackend.Services
       return await _context.Products.OrderBy(p => p.Id).ToListAsync();
     }
 
-    public bool CreateProduct(Product product)
+    public async Task<Product> CreateProductAsync(Product product)
     {
       _context.Products.Add(product);
-      return Save();
-    }
-
-    public bool Save()
-    {
-      return _context.SaveChanges() > 0;
+      await _context.SaveChangesAsync();
+      return product;
     }
   }
 }

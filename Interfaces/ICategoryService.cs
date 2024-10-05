@@ -8,8 +8,6 @@ namespace InventorizationBackend.Interfaces
 
     Task<Category> GetCategoryAsync(int categoryId);
 
-    bool CreateCategory(Category category);
-
-    bool Save();
+    Task<Category> CreateCategoryAsync(string categoryName);
   }
 }
