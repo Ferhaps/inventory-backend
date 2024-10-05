@@ -6,6 +6,8 @@ namespace InventorizationBackend.Interfaces
   {
     Task<ICollection<Product>> GetProductsAsync();
 
+    bool CreateProduct(Product product);
+
     bool Save();
   }
 }

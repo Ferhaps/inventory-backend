@@ -27,7 +27,8 @@ namespace InventorizationBackend
       builder.Services.AddAutoMapper(typeof(MappingProfiles));
       builder.Services.AddScoped<IProductService, ProductService>();
       builder.Services.AddScoped<IAuthService, AuthService>();
-      builder.Services.AddScoped<ITokenBlacklistService, TokenBlacklistService>();
+      builder.Services.AddScoped<ICategoryService, CategoryService>();
+      builder.Services.AddSingleton<ITokenBlacklistService, TokenBlacklistService>();
 
       builder.Services.AddDbContext<DataContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
