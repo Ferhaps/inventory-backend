@@ -30,6 +30,16 @@ namespace InventorizationBackend
       builder.Services.AddScoped<ICategoryService, CategoryService>();
       builder.Services.AddSingleton<ITokenBlacklistService, TokenBlacklistService>();
 
+      builder.Services.AddCors(options =>
+      {
+        options.AddDefaultPolicy(builder =>
+        {
+          builder.AllowAnyOrigin()
+          .AllowAnyMethod()
+          .AllowAnyHeader();
+        });
+      });
+
       builder.Services.AddDbContext<DataContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -101,9 +111,15 @@ namespace InventorizationBackend
       }
 
       app.UseHttpsRedirection();
+
+      app.UseCors();
+
       app.UseAuthentication();
+
       app.UseAuthorization();
+
       app.MapControllers();
+
 
       app.Run();
     }
