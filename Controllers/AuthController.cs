@@ -18,7 +18,7 @@ namespace InventorizationBackend.Controllers
       var token = await _authService.LoginAsync(model);
 
       if (string.IsNullOrEmpty(token))
-        return BadRequest(new { error = "INVALID_CREDENTIALS" });
+        return BadRequest(new { error = "Invalid Credentials" });
 
       return Ok(new { accessToken = token });
     }
@@ -32,13 +32,13 @@ namespace InventorizationBackend.Controllers
     {
       if (model.Role != "ADMIN" && model.Role != "OPERATOR")
       {
-        return BadRequest(new { message = "Invalid role specified. Role must be either ADMIN or OPERATOR." });
+        return BadRequest(new { error = "Invalid role specified. Role must be either ADMIN or OPERATOR." });
       }
 
       var (Succeeded, Errors) = await _authService.RegisterAsync(model);
 
       if (Succeeded)
-        return Ok(new { message = "User registered successfully" });
+        return Ok(new { error = "User registered successfully" });
 
       return BadRequest(new { errors = Errors });
     }

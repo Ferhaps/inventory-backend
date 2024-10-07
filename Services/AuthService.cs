@@ -47,7 +47,6 @@ namespace InventorizationBackend.Services
           claims: authClaims,
           signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
         );
-        Console.WriteLine(token.ToString());
 
         return new JwtSecurityTokenHandler().WriteToken(token);
       }

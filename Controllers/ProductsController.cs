@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using InventorizationBackend.Dto;
 using InventorizationBackend.Interfaces;
-using InventorizationBackend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +15,7 @@ namespace InventorizationBackend.Controllers
 
     [HttpGet]
     [Authorize]
-    [ProducesResponseType(200, Type = typeof(ICollection<Product>))]
+    [ProducesResponseType(200, Type = typeof(ICollection<ProductDto>))]
     public async Task<IActionResult> GetProductsAsync()
     {
       var products = await _productService.GetProductsAsync();
@@ -32,7 +31,7 @@ namespace InventorizationBackend.Controllers
     {
       if (string.IsNullOrWhiteSpace(name))
       {
-        return BadRequest("Product name is required.");
+        return BadRequest(new { error = "Product name is required." });
       }
 
       try
@@ -42,7 +41,7 @@ namespace InventorizationBackend.Controllers
       }
       catch (ArgumentException ex)
       {
-        return BadRequest(ex.Message);
+        return BadRequest(new { error = ex.Message });
       }
     }
 
