@@ -43,7 +43,7 @@ namespace InventorizationBackend.Services
         var token = new JwtSecurityToken(
           issuer: _configuration["JWT:Issuer"],
           audience: null,
-          expires: DateTime.Now.AddSeconds(5),
+          expires: DateTime.Now.AddMonths(1),
           claims: authClaims,
           signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
         );
