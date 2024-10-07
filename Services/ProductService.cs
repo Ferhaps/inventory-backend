@@ -12,7 +12,7 @@ namespace InventorizationBackend.Services
 
     public async Task<ICollection<Product>> GetProductsAsync()
     {
-      return await _context.Products.Include(p => p.Category).ToListAsync();
+      return await _context.Products.Include(p => p.Category).OrderByDescending(p => p.Id).ToListAsync();
     }
 
     public async Task<ProductDto> CreateProductAsync(int categoryId, string productName)
@@ -35,10 +35,10 @@ namespace InventorizationBackend.Services
 
       return new ProductDto
       {
-          Id = product.Id,
-          CategoryName = category.Name,
-          Quantity = 0,
-          Name = productName
+        Id = product.Id,
+        Quantity = 0,
+        Name = productName,
+        CategoryId = categoryId,
       };
     }
 

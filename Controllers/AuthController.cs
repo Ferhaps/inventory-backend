@@ -28,7 +28,7 @@ namespace InventorizationBackend.Controllers
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]
     [ProducesResponseType(403)]
-    public async Task<IActionResult> RegisterAsync([FromBody] RegisterModel model)
+    public async Task<IActionResult> Register([FromBody] RegisterModel model)
     {
       if (model.Role != "ADMIN" && model.Role != "OPERATOR")
       {

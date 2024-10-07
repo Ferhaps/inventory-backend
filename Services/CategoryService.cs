@@ -11,12 +11,12 @@ namespace InventorizationBackend.Services
 
     public async Task<ICollection<Category>> GetCategoriesAsync()
     {
-      return await _context.Categories.OrderBy(c => c.Id).ToListAsync();
+      return await _context.Categories.OrderByDescending(c => c.Id).ToListAsync();
     }
 
     public async Task<Category> GetCategoryAsync(int categoryId)
     {
-      return await _context.Categories.FirstOrDefaultAsync(c => c.Id == categoryId);
+      return await _context.Categories.FindAsync(categoryId);
     }
 
     public async Task<Category> CreateCategoryAsync(string name)

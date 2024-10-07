@@ -1,6 +1,5 @@
 ﻿using InventorizationBackend.Dto;
 using InventorizationBackend.Models;
-using System.Threading.Tasks;
 
 namespace InventorizationBackend.Interfaces
 {

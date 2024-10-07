@@ -8,8 +8,8 @@ namespace InventorizationBackend.Helper
   {
     public MappingProfiles()
     {
-      CreateMap<Product, ProductDto>()
-        .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name));
+      CreateMap<Product, ProductDto>();
+      CreateMap<Category, CategoryDto>();
     }
   }
 }

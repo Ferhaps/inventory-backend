@@ -16,7 +16,7 @@ namespace InventorizationBackend.Controllers
     [HttpGet]
     [Authorize]
     [ProducesResponseType(200, Type = typeof(ICollection<ProductDto>))]
-    public async Task<IActionResult> GetProductsAsync()
+    public async Task<IActionResult> GetProducts()
     {
       var products = await _productService.GetProductsAsync();
       var productDtos = _mapper.Map<List<ProductDto>>(products);
@@ -27,7 +27,7 @@ namespace InventorizationBackend.Controllers
     [HttpPost]
     [Authorize]
     [ProducesResponseType(200, Type = typeof(ProductDto))]
-    public async Task<IActionResult> CreateProductAsync([FromQuery] string name, [FromQuery] int categoryId)
+    public async Task<IActionResult> CreateProduct([FromQuery] string name, [FromQuery] int categoryId)
     {
       if (string.IsNullOrWhiteSpace(name))
       {
@@ -66,7 +66,7 @@ namespace InventorizationBackend.Controllers
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "ADMIN")]
-    public async Task<IActionResult> DeleteProductAsync(int id)
+    public async Task<IActionResult> DeleteProduct(int id)
     {
       var result = await _productService.DeleteProductAsync(id);
       if (!result)
