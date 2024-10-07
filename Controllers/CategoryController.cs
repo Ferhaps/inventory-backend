@@ -36,8 +36,7 @@ namespace InventorizationBackend.Controllers
 
       if (category == null)
       {
-        ModelState.AddModelError("", "Something went wrong while saving");
-        return StatusCode(500, ModelState);
+        return StatusCode(500, "Something went wrong while saving");
       }
 
       var categoryDto = _mapper.Map<CategoryDto>(category);
@@ -51,7 +50,7 @@ namespace InventorizationBackend.Controllers
       var result = await _categoryService.DeleteCategoryAsync(id);
       if (!result)
       {
-        return NotFound();
+        return NotFound("Category not found");
       }
 
       return Ok();

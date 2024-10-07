@@ -31,7 +31,7 @@ namespace InventorizationBackend.Controllers
     {
       if (string.IsNullOrWhiteSpace(name))
       {
-        return BadRequest(new { error = "Product name is required." });
+        return BadRequest("Product name is required");
       }
 
       try
@@ -45,9 +45,9 @@ namespace InventorizationBackend.Controllers
       }
     }
 
-    [HttpPatch("{id}/quantity")]
+    [HttpPatch("{id}")]
     [Authorize]
-    public async Task<IActionResult> UpdateProductQuantity(int id, [FromBody] int quantity)
+    public async Task<IActionResult> UpdateProductQuantity(int id, [FromQuery] int quantity)
     {
       try
       {
@@ -71,7 +71,7 @@ namespace InventorizationBackend.Controllers
       var result = await _productService.DeleteProductAsync(id);
       if (!result)
       {
-        return NotFound();
+        return NotFound("Product not found");
       }
 
       return Ok();
