@@ -11,7 +11,6 @@ using Microsoft.Extensions.Options;
 using InventorizationBackend.Interfaces;
 using InventorizationBackend.Services;
 using InventorizationBackend.Helper;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace InventorizationBackend
 {
@@ -28,7 +27,6 @@ namespace InventorizationBackend
       builder.Services.AddScoped<IProductService, ProductService>();
       builder.Services.AddScoped<IAuthService, AuthService>();
       builder.Services.AddScoped<ICategoryService, CategoryService>();
-      builder.Services.AddSingleton<ITokenBlacklistService, TokenBlacklistService>();
 
       builder.Services.AddCors(options =>
       {
@@ -67,20 +65,6 @@ namespace InventorizationBackend
 
           ValidateIssuerSigningKey = true,
           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
-        };
-
-        options.Events = new JwtBearerEvents
-        {
-          OnTokenValidated = async context =>
-          {
-            var tokenBlacklistService = context.HttpContext.RequestServices.GetRequiredService<ITokenBlacklistService>();
-            var jti = context.Principal?.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
-
-            if (await tokenBlacklistService.IsTokenBlacklisted(jti))
-            {
-              context.Fail("This token is no longer valid.");
-            }
-          }
         };
       });
 

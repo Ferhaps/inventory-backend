@@ -2,7 +2,6 @@
 using InventorizationBackend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace InventorizationBackend.Controllers
 {
@@ -42,23 +41,6 @@ namespace InventorizationBackend.Controllers
         return Ok(new { message = "User registered successfully" });
 
       return BadRequest(new { errors = Errors });
-    }
-
-    [HttpPost("logout")]
-    [Authorize]
-    [ProducesResponseType(401)]
-    public async Task<IActionResult> Logout([FromServices] ITokenBlacklistService tokenBlacklistService)
-    {
-      var jti = User.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
-      var expClaim = User.FindFirst(JwtRegisteredClaimNames.Exp)?.Value;
-
-      if (jti != null && expClaim != null)
-      {
-        var expiration = DateTimeOffset.FromUnixTimeSeconds(long.Parse(expClaim)).UtcDateTime;
-        await tokenBlacklistService.BlacklistToken(jti, expiration);
-      }
-
-      return Ok(new { message = "Logged out successfully. The token is now invalid." });
     }
   }
 }
