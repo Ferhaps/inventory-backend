@@ -12,6 +12,7 @@ namespace InventorizationBackend.Controllers
     private readonly IAuthService _authService = authService;
 
     [HttpPost("login")]
+    [ProducesResponseType(400)]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
       var token = await _authService.LoginAsync(model);
@@ -25,6 +26,8 @@ namespace InventorizationBackend.Controllers
 
     [HttpPost("register")]
     [Authorize(Roles = "ADMIN")]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
     public async Task<IActionResult> Register([FromBody] RegisterModel model)
     {
       if (model.Role != "ADMIN" && model.Role != "OPERATOR")

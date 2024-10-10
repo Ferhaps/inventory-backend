@@ -15,6 +15,8 @@ namespace InventorizationBackend.Controllers
 
     [HttpGet]
     [Authorize]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
     [ProducesResponseType(200, Type = typeof(ICollection<CategoryDto>))]
     public async Task<IActionResult> GetCategories()
     {
@@ -25,6 +27,8 @@ namespace InventorizationBackend.Controllers
 
     [HttpPost]
     [Authorize]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
     [ProducesResponseType(200, Type = typeof(CategoryDto))]
     public async Task<IActionResult> CreateCategory([FromQuery] string categoryName)
     {
@@ -45,6 +49,9 @@ namespace InventorizationBackend.Controllers
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "ADMIN")]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(404)]
     public async Task<IActionResult> DeleteCategory(int id)
     {
       var result = await _categoryService.DeleteCategoryAsync(id);

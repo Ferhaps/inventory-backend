@@ -15,6 +15,8 @@ namespace InventorizationBackend.Controllers
 
     [HttpGet]
     [Authorize]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
     [ProducesResponseType(200, Type = typeof(ICollection<ProductDto>))]
     public async Task<IActionResult> GetProducts()
     {
@@ -26,6 +28,8 @@ namespace InventorizationBackend.Controllers
 
     [HttpPost]
     [Authorize]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
     [ProducesResponseType(200, Type = typeof(ProductDto))]
     public async Task<IActionResult> CreateProduct([FromQuery] string name, [FromQuery] int categoryId)
     {
@@ -47,6 +51,8 @@ namespace InventorizationBackend.Controllers
 
     [HttpPatch("{id}")]
     [Authorize]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
     public async Task<IActionResult> UpdateProductQuantity(int id, [FromQuery] int quantity)
     {
       try
@@ -65,6 +71,9 @@ namespace InventorizationBackend.Controllers
     }
 
     [HttpDelete("{id}")]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(404)]
     [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> DeleteProduct(int id)
     {
