@@ -27,6 +27,7 @@ namespace InventorizationBackend
       builder.Services.AddScoped<IProductService, ProductService>();
       builder.Services.AddScoped<IAuthService, AuthService>();
       builder.Services.AddScoped<ICategoryService, CategoryService>();
+      builder.Services.AddScoped<IUserService, UserService>();
 
       builder.Services.AddCors(options =>
       {
