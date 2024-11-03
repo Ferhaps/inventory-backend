@@ -1,4 +1,5 @@
-﻿using InventorizationBackend.Interfaces;
+﻿using InventorizationBackend.Dto;
+using InventorizationBackend.Interfaces;
 using InventorizationBackend.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -14,7 +15,7 @@ namespace InventorizationBackend.Services
     private readonly RoleManager<IdentityRole> _roleManager = roleManager;
     private readonly IConfiguration _configuration = configuration;
 
-    public async Task<string> LoginAsync(LoginModel loginBody)
+    public async Task<LoggedUserDto> LoginAsync(LoginModel loginBody)
     {
       var user = await _userManager.FindByEmailAsync(loginBody.Email);
       if (user != null && await _userManager.CheckPasswordAsync(user, loginBody.Password))
@@ -33,9 +34,9 @@ namespace InventorizationBackend.Services
           authClaims.Add(new Claim(JwtRegisteredClaimNames.Aud, aud));
         }
 
-        foreach (var userRole in userRoles)
+        foreach (var role in userRoles)
         {
-          authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+          authClaims.Add(new Claim(ClaimTypes.Role, role));
         }
 
         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
@@ -48,7 +49,22 @@ namespace InventorizationBackend.Services
           signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
         );
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+        var roleName = userRoles.FirstOrDefault() ?? "OPERATOR";
+
+        var userObj = new UserDto
+        {
+          Id = user.Id,
+          Email = user.Email,
+          Role = roleName
+        };
+
+        return new LoggedUserDto
+        {
+          token = jwt,
+          User = userObj
+        };
       }
 
       return null;

@@ -15,13 +15,13 @@ namespace InventorizationBackend.Controllers
     [ProducesResponseType(400)]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
-      var token = await _authService.LoginAsync(model);
+      var userInfo = await _authService.LoginAsync(model);
 
-      if (string.IsNullOrEmpty(token)) {
+      if (string.IsNullOrEmpty(userInfo.token)) {
         return BadRequest("Invalid Credentials");
       }
 
-      return Ok(new { accessToken = token });
+      return Ok(userInfo);
     }
 
     [HttpPost("register")]
