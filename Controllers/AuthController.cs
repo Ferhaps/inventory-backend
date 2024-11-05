@@ -13,12 +13,14 @@ namespace InventorizationBackend.Controllers
     private readonly IAuthService _authService = authService;
 
     [HttpPost("login")]
+    [ProducesResponseType(200, Type = typeof(LoggedUserDto))]
     [ProducesResponseType(400)]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
       var userInfo = await _authService.LoginAsync(model);
 
-      if (string.IsNullOrEmpty(userInfo.token)) {
+      if (userInfo == null)
+      {
         return BadRequest("Invalid Credentials");
       }
 
@@ -30,19 +32,17 @@ namespace InventorizationBackend.Controllers
     [ProducesResponseType(200, Type = typeof(UserDto))]
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]
+    [ProducesResponseType(403)]
     public async Task<IActionResult> Register([FromBody] RegisterModel model)
     {
-      if (model.Role != "ADMIN" && model.Role != "OPERATOR")
-      {
-        return BadRequest("Invalid role specified. Role must be either ADMIN or OPERATOR.");
-      }
-
       var (user, Errors) = await _authService.RegisterAsync(model);
 
-      if (user != null)
-        return Ok(user);
+      if (user == null)
+      {
+        return BadRequest(new { errors = Errors });
+      }
 
-      return BadRequest(new { errors = Errors });
+      return Ok(user);
     }
   }
 }

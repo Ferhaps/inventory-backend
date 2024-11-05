@@ -18,19 +18,26 @@ namespace InventorizationBackend.Controllers
     [ProducesResponseType(401)]
     public async Task<IActionResult> GetUsers()
     {
-      var users = await _userService.GetUsersAsync();
-
-      if (users != null)
+      try
       {
-        return Ok(users);
-      }
+        var users = await _userService.GetUsersAsync();
 
-      return BadRequest();
+        if (users == null)
+        {
+          return BadRequest();
+        }
+
+        return Ok(users);
+
+      }
+      catch (Exception ex)
+      {
+        return BadRequest(ex.Message);
+      }
     }
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "ADMIN")]
-    [ProducesResponseType(200, Type = typeof(ICollection<UserDto>))]
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]
     [ProducesResponseType(403)]

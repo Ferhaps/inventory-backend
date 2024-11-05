@@ -15,7 +15,7 @@ namespace InventorizationBackend.Services
     private readonly RoleManager<IdentityRole> _roleManager = roleManager;
     private readonly IConfiguration _configuration = configuration;
 
-    public async Task<LoggedUserDto> LoginAsync(LoginModel loginBody)
+    public async Task<LoggedUserDto?> LoginAsync(LoginModel loginBody)
     {
       var user = await _userManager.FindByEmailAsync(loginBody.Email);
       if (user != null && await _userManager.CheckPasswordAsync(user, loginBody.Password))

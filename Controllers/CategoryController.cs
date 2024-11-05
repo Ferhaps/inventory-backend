@@ -15,9 +15,9 @@ namespace InventorizationBackend.Controllers
 
     [HttpGet]
     [Authorize]
+    [ProducesResponseType(200, Type = typeof(ICollection<CategoryDto>))]
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]
-    [ProducesResponseType(200, Type = typeof(ICollection<CategoryDto>))]
     public async Task<IActionResult> GetCategories()
     {
       var categories = await _categoryService.GetCategoriesAsync();
@@ -27,9 +27,9 @@ namespace InventorizationBackend.Controllers
 
     [HttpPost]
     [Authorize]
+    [ProducesResponseType(200, Type = typeof(CategoryDto))]
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]
-    [ProducesResponseType(200, Type = typeof(CategoryDto))]
     public async Task<IActionResult> CreateCategory([FromQuery] string categoryName)
     {
       if (!ModelState.IsValid)
