@@ -9,6 +9,19 @@ namespace InventorizationBackend.Controllers
   {
     private readonly IUserService _userService = userService;
 
+    [HttpGet]
+    public async Task<IActionResult> GetUsers()
+    {
+      var users = await _userService.GetUsersAsync();
+
+      if (users != null)
+      {
+        return Ok(users);
+      }
+
+      return BadRequest();
+    }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(string id)
     {

@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("InventorizationBackend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f0f5eb30054f1964776ce14e9b1c9a8ef25c1238")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f07d57dbaa91613ae6844fb439c803b029dfa641")]
 [assembly: System.Reflection.AssemblyProductAttribute("InventorizationBackend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("InventorizationBackend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
