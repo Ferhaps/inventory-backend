@@ -51,6 +51,7 @@ namespace InventorizationBackend.Controllers
     [Authorize(Roles = "ADMIN")]
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]
+    [ProducesResponseType(403)]
     [ProducesResponseType(404)]
     public async Task<IActionResult> DeleteCategory(int id)
     {

@@ -73,6 +73,7 @@ namespace InventorizationBackend.Controllers
     [HttpDelete("{id}")]
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]
+    [ProducesResponseType(403)]
     [ProducesResponseType(404)]
     [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> DeleteProduct(int id)

@@ -1,4 +1,5 @@
-﻿using InventorizationBackend.Interfaces;
+﻿using InventorizationBackend.Dto;
+using InventorizationBackend.Interfaces;
 using InventorizationBackend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,7 @@ namespace InventorizationBackend.Controllers
 
     [HttpPost("register")]
     [Authorize(Roles = "ADMIN")]
+    [ProducesResponseType(200, Type = typeof(UserDto))]
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]
     public async Task<IActionResult> Register([FromBody] RegisterModel model)
@@ -35,10 +37,10 @@ namespace InventorizationBackend.Controllers
         return BadRequest("Invalid role specified. Role must be either ADMIN or OPERATOR.");
       }
 
-      var (Succeeded, Errors) = await _authService.RegisterAsync(model);
+      var (user, Errors) = await _authService.RegisterAsync(model);
 
-      if (Succeeded)
-        return Ok("User registered successfully");
+      if (user != null)
+        return Ok(user);
 
       return BadRequest(new { errors = Errors });
     }
