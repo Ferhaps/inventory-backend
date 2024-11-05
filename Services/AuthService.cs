@@ -70,7 +70,7 @@ namespace InventorizationBackend.Services
       return null;
     }
 
-    public async Task<(bool Succeeded, string[] Errors)> RegisterAsync(RegisterModel registerBody)
+    public async Task<(UserDto? user, string[] Errors)> RegisterAsync(RegisterModel registerBody)
     {
       var user = new ApplicationUser { UserName = registerBody.Email, Email = registerBody.Email };
       var result = await _userManager.CreateAsync(user, registerBody.Password);
@@ -79,7 +79,7 @@ namespace InventorizationBackend.Services
       {
         if (registerBody.Role != "ADMIN" && registerBody.Role != "OPERATOR")
         {
-          return (false, new[] { "Invalid role specified." });
+          return (null, new[] { "Invalid role specified." });
         }
 
         if (!await _roleManager.RoleExistsAsync(registerBody.Role))
@@ -89,10 +89,17 @@ namespace InventorizationBackend.Services
 
         await _userManager.AddToRoleAsync(user, registerBody.Role);
 
-        return (true, []);
+        var userDto = new UserDto
+        {
+          Id = user.Id,
+          Email = user.Email,
+          Role = registerBody.Role,
+        };
+
+        return (userDto, []);
       }
 
-      return (false, result.Errors.Select(e => e.Description).ToArray());
+      return (null, result.Errors.Select(e => e.Description).ToArray());
     }
   }
 }
